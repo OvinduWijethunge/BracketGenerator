@@ -16,8 +16,10 @@ public class Program
             .AddSingleton<ITournement, WorldCupTournement>()
             .AddSingleton<ITournement, NCCATournement>()
             .AddSingleton<ITournement, GroupTournement>()
+            .AddTransient<ITeamService, TeamService>()
+            .AddTransient<IMatchService, MatchService>()
+            .AddTransient<IResultService, ResultService>()
             .AddTransient<ITournamentService, TournamentService>()
-            .AddTransient<IWinningStrategyService, WinningStrategyService>()
             .AddTransient<ITournamentFactory, TournamentFactory>()
             .BuildServiceProvider();
 

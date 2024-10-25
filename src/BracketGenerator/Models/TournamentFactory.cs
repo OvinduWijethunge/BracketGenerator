@@ -11,10 +11,15 @@ namespace BracketGenerator.Models
 {
     public class TournamentFactory : ITournamentFactory
     {
-        private readonly IWinningStrategyService _winningStrategyService;
-        public TournamentFactory(IWinningStrategyService winningStrategyService)
+        private readonly ITeamService _teamService;
+        private readonly IMatchService _matchService;
+        private readonly IResultService _resultService;
+
+        public TournamentFactory(ITeamService teamService, IMatchService matchService, IResultService resultService)
         {
-            _winningStrategyService = winningStrategyService;
+            _teamService = teamService;
+            _matchService = matchService;
+            _resultService = resultService;
         }
 
         public ITournement CreateTournament(Enum tournamentType)
@@ -23,11 +28,11 @@ namespace BracketGenerator.Models
             switch (tournamentType)
             {
                 case TournamentType.Group:
-                    return new GroupTournement(_winningStrategyService);
+                    return new GroupTournement(_teamService,_matchService, _resultService);
                 case TournamentType.Knockout:
-                    return new WorldCupTournement(_winningStrategyService);
+                    return new WorldCupTournement(_teamService, _matchService, _resultService);
                 case TournamentType.NCAA:
-                    return new NCCATournement(_winningStrategyService);
+                    return new NCCATournement(_teamService, _matchService, _resultService);
                 default:
                     throw new ArgumentException("Invalid tournament type");
             }

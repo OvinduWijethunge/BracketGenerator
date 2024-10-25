@@ -1,4 +1,5 @@
 ﻿using BracketGenerator.Interfaces;
+using BracketGenerator.Services;
 using BracketGenerator.Utility;
 using System;
 using System.Collections.Generic;
@@ -8,43 +9,42 @@ namespace BracketGenerator.Models
 {
     public class NCCATournement : ITournement
     {
-        private readonly IWinningStrategyService _winningStrategyService;
+
         private readonly Dictionary<int, List<Match>> _roundMatches = new Dictionary<int, List<Match>>(); // Stores matches by round number
         private List<Team> _currentRoundTeams = new List<Team>(); // Teams for the current round
         private List<Team> _firstRoundTeams = new List<Team>(); // Teams for the first round
-        Team WiningTeam = new Team("teamName");
+        private Team _winningTeam;
 
         // Static utility methods to get the initial teams
         private static List<string> FirstRoundTeamsList => TeamsUtilities.NCAAFirstRoundTeamsList();
         private static List<string> TopLevelTeamsList => TeamsUtilities.NCAALevelATeamsList();
 
         public List<string> FirstRoundWinningTeamsList { get; private set; } = new List<string>();
-
-        public NCCATournement(IWinningStrategyService winningStrategyService)
+        private readonly ITeamService _teamService;
+        private readonly IMatchService _matchService;
+        private readonly IResultService _resultService;
+        public NCCATournement(ITeamService teamService, IMatchService matchService, IResultService resultService)
         {
-            _winningStrategyService = winningStrategyService ?? throw new ArgumentNullException(nameof(winningStrategyService));
+            _teamService = teamService ?? throw new ArgumentNullException(nameof(teamService));
+            _matchService = matchService ?? throw new ArgumentNullException(nameof(matchService));
+            _resultService = resultService ?? throw new ArgumentNullException(nameof(resultService));
         }
 
         public void SeedTeams()
         {
-            // Seed first round teams
-            _firstRoundTeams = FirstRoundTeamsList.Select(teamName => new Team(teamName)).ToList();
-          
 
-            // Seed top-level teams for later rounds
-            _currentRoundTeams = TopLevelTeamsList.Select(teamName => new Team(teamName)).ToList();
+            _firstRoundTeams = _teamService.SeedTeams(FirstRoundTeamsList);  
+            _currentRoundTeams = _teamService.SeedTeams(TopLevelTeamsList); 
           
         }
 
         public void ExecuteTournament()
         {
-            // Start the first round
             Console.WriteLine("Starting First Round...");
             InitializeFirstRoundMatches();
 
             // Execute the subsequent rounds until a winner is found
             int totalRounds = (int)Math.Log2(_currentRoundTeams.Count);
-
             for (int round = 1; round <= totalRounds; round++)
             {
                 Console.WriteLine($"Starting Round {round + 1}...");
@@ -53,16 +53,11 @@ namespace BracketGenerator.Models
         }
 
         private void InitializeFirstRoundMatches()
-        {
-            // Generate first-round matches by pairing first-round teams
-            var firstRoundMatches = GenerateMatches(_firstRoundTeams);
+        {// Generate and simulate first round matches using the match service
+            var firstRoundMatches = _matchService.GenerateMatches(_firstRoundTeams);
             _roundMatches[0] = firstRoundMatches;
+            _firstRoundTeams = _matchService.SimulateMatches(firstRoundMatches);
 
-            // Simulate and update the results
-            SimulateAndDisplayMatches(firstRoundMatches, 0);
-
-            // Prepare the winning teams for the next round
-            _firstRoundTeams = firstRoundMatches.Select(match => match.Winner).ToList();
             FillCurrentRoundTeams();
         }
 
@@ -87,62 +82,24 @@ namespace BracketGenerator.Models
                 throw new InvalidOperationException("Not enough teams to generate matches for this round.");
             }
 
-            // Generate matches for the current round
-            var roundMatches = GenerateMatches(_currentRoundTeams);
+            var roundMatches = _matchService.GenerateMatches(_currentRoundTeams);
             _roundMatches[roundNumber] = roundMatches;
 
-            // Simulate and update the results
-            SimulateAndDisplayMatches(roundMatches, roundNumber);
-
-            // Prepare the winning teams for the next round
-            _currentRoundTeams = roundMatches.Select(match => match.Winner).ToList();
+            _currentRoundTeams = _matchService.SimulateMatches(roundMatches);
         }
 
-        private List<Match> GenerateMatches(List<Team> teams)
-        {
-            var matches = new List<Match>();
 
-            for (int i = 0; i < teams.Count; i += 2)
-            {
-                if (i + 1 < teams.Count)
-                {
-                    matches.Add(new Match(teams[i], teams[i + 1]));
-                }
-            }
-
-            return matches;
-        }
-
-        private void SimulateAndDisplayMatches(List<Match> matches, int roundNumber)
-        {
-            matches = _winningStrategyService.ChooseWinner(matches);
-            _roundMatches[roundNumber] = matches;
-
-            foreach (var match in matches)
-            {
-                Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
-            }
-        }
 
         public void GetTournamentWinner()
         {
-            WiningTeam = _currentRoundTeams.Count == 1 ? _currentRoundTeams[0] : null;
-            Console.WriteLine($"Tournament winner is: {WiningTeam?.Name}");
+            _winningTeam = _resultService.DetermineWinner(_currentRoundTeams);
+            _resultService.DisplayWinner(_winningTeam);
         }
 
         public void PathToVictory()
         {
-            var path =  _roundMatches.Values
-                .SelectMany(matches => matches)
-                .Where(match => match.Winner == WiningTeam)
-                .Select(match => match.Team1 == WiningTeam ? match.Team2 : match.Team1)
-                .ToList();
-
-            Console.WriteLine($"Path to victory for {WiningTeam.Name}:");
-            foreach (var team in path)
-            {
-                Console.WriteLine(team.Name);
-            }
+            var path = _resultService.GetPathToVictory(_roundMatches, _winningTeam);
+            _resultService.DisplayPathToVictory(path, _winningTeam);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using BracketGenerator.Interfaces;
+using BracketGenerator.Services;
 using BracketGenerator.Utility;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,17 @@ namespace BracketGenerator.Models
 {
     public class GroupTournement : ITournement
     {
-        private readonly IWinningStrategyService _winningStrategyService;
+
 
         // Dictionary to store teams and matches by group
         private readonly Dictionary<string, List<Team>> _groupTeams = new Dictionary<string, List<Team>>();
         private readonly Dictionary<string, List<Match>> _groupMatches = new Dictionary<string, List<Match>>();
 
         private readonly List<string> _groupStageWinningTeams = new List<string>();
+
+        private readonly ITeamService _teamService;
+        private readonly IMatchService _matchService;
+        private readonly IResultService _resultService;
 
         // Group list initialization
         private List<string> GroupATeamsList => TeamsUtilities.GroupAList();
@@ -26,9 +31,11 @@ namespace BracketGenerator.Models
         private List<string> GroupGTeamsList => TeamsUtilities.GroupGList();
         private List<string> GroupHTeamsList => TeamsUtilities.GroupHList();
 
-        public GroupTournement(IWinningStrategyService winningStrategyService)
+        public GroupTournement(ITeamService teamService, IMatchService matchService, IResultService resultService)
         {
-            _winningStrategyService = winningStrategyService ?? throw new ArgumentNullException(nameof(winningStrategyService));
+            _teamService = teamService;
+            _matchService = matchService;
+            _resultService = resultService;
         }
 
         // Initialize group teams and matches
@@ -36,14 +43,14 @@ namespace BracketGenerator.Models
 
         public void SeedTeams()
         {
-            _groupTeams["A"] = GroupATeamsList.Select(teamName => new Team(teamName)).ToList();
-            _groupTeams["B"] = GroupBTeamsList.Select(teamName => new Team(teamName)).ToList();
-            _groupTeams["C"] = GroupCTeamsList.Select(teamName => new Team(teamName)).ToList();
-            _groupTeams["D"] = GroupDTeamsList.Select(teamName => new Team(teamName)).ToList();
-            _groupTeams["E"] = GroupETeamsList.Select(teamName => new Team(teamName)).ToList();
-            _groupTeams["F"] = GroupFTeamsList.Select(teamName => new Team(teamName)).ToList();
-            _groupTeams["G"] = GroupGTeamsList.Select(teamName => new Team(teamName)).ToList();
-            _groupTeams["H"] = GroupHTeamsList.Select(teamName => new Team(teamName)).ToList();
+            _groupTeams["A"] = _teamService.SeedTeams(GroupATeamsList);  
+            _groupTeams["B"] = _teamService.SeedTeams(GroupBTeamsList);   
+            _groupTeams["C"] = _teamService.SeedTeams(GroupCTeamsList);   
+            _groupTeams["D"] = _teamService.SeedTeams(GroupDTeamsList);    
+            _groupTeams["E"] = _teamService.SeedTeams(GroupETeamsList);    
+            _groupTeams["F"] = _teamService.SeedTeams(GroupFTeamsList);    
+            _groupTeams["G"] = _teamService.SeedTeams(GroupGTeamsList);  
+            _groupTeams["H"] = _teamService.SeedTeams(GroupHTeamsList);   
         }
 
         public void ExecuteTournament()
@@ -56,66 +63,20 @@ namespace BracketGenerator.Models
         {
             foreach (var group in _groupTeams.Keys)
             {
-                // Generate matches for the group
-                _groupMatches[group] = GenerateRoundRobinMatches(_groupTeams[group]);
+                // Use the adapted IMatchService to generate group matches
+                _groupMatches[group] = _matchService.GenerateGroupMatches(_groupTeams[group]);
 
                 // Simulate the matches for the group
                 Console.WriteLine($"\nGroup {group} Matches:");
-                var groupWinners = SimulateMatches(_groupMatches[group]);
+                var groupWinners = _matchService.SimulateMatches(_groupMatches[group]);
 
-                // Display top 2 teams in the group
-                DisplayTopTeams(groupWinners, group);
+                //  Display top 2 teams in the group
+                _resultService.DisplayTopTeams(groupWinners, group);
             }
         }
 
-        private List<Match> GenerateRoundRobinMatches(List<Team> teams)
-        {
-            var matches = new List<Match>();
-
-            // Round-robin match generation
-            for (int i = 0; i < teams.Count; i++)
-            {
-                for (int j = i + 1; j < teams.Count; j++)
-                {
-                    matches.Add(new Match(teams[i], teams[j]));
-                }
-            }
-
-            return matches;
-        }
-
-        private List<Team> SimulateMatches(List<Match> matches)
-        {
-            List<Team> winningTeams = new List<Team>();
-
-            // Simulate each match and determine winners
-            matches = _winningStrategyService.ChooseWinner(matches);
-
-            foreach (var match in matches)
-            {
-                winningTeams.Add(match.Winner);
-                Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
-            }
-
-            return winningTeams;
-        }
-
-        private void DisplayTopTeams(List<Team> winningTeams, string groupName)
-        {
-            // Get top 2 teams based on the number of wins in descending order
-            var topTeams = winningTeams
-                .GroupBy(team => team)
-                .Select(group => new { Team = group.Key, Wins = group.Count() })
-                .OrderByDescending(team => team.Wins)
-                .Take(2);
-
-            Console.WriteLine($"\nTop 2 Teams in Group {groupName}:");
-            foreach (var team in topTeams)
-            {
-                Console.WriteLine($"{team.Team.Name} - {team.Wins} Wins in group stage");
-                _groupStageWinningTeams.Add(team.Team.Name);
-            }
-        }
+  
+      
 
         public void GetTournamentWinner()
         {

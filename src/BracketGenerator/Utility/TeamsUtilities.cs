@@ -26,9 +26,9 @@ namespace BracketGenerator.Utility
 
             return new List<string>
             {
-            "St. John's (NY)", " Princeton", "North Carolina", " Loyola Maryland",
+            "St. John's (NY)", "Princeton", "North Carolina", "Loyola Maryland",
             "Akron", " Santa Clara", "*Grand Canyon", "Denver",
-            "*Northern Il", "Oakland", "*Hofstra", " Lipscomb",
+            "*Northern Il", "Oakland", "*Hofstra", "Lipscomb",
             "Wake Fores", "Mercer", "Vermon", "Villanova",
             "*Charlotte", "Georgia St", "*Providence", "Marist",
             "*Virginia Tech", " Campbel", "*Missouri St", "Creighton",

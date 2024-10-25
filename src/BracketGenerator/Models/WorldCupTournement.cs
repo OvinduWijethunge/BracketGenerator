@@ -1,4 +1,5 @@
 ﻿using BracketGenerator.Interfaces;
+using BracketGenerator.Services;
 using BracketGenerator.Utility;
 using System;
 using System.Collections.Generic;
@@ -9,17 +10,23 @@ namespace BracketGenerator.Models
 {
     public class WorldCupTournement : ITournement
     {
-        private IWinningStrategyService _winningStrategyService;
+
         private Dictionary<int, List<Match>> _roundMatches = new Dictionary<int, List<Match>>(); // Stores matches by round number
         private List<Team> _currentRoundTeams = new List<Team>(); // Teams for the current round
         public List<Team> Teams { get; private set; } = new List<Team>();
         public List<string> TeamsList = TeamsUtilities.SimpleTeams();
 
-        Team WiningTeam = new Team("teamName");
+        private readonly ITeamService _teamService;
+        private readonly IMatchService _matchService;
+        private readonly IResultService _resultService;
 
-        public WorldCupTournement(IWinningStrategyService winningStrategyService)
+        private Team _winningTeam;
+
+        public WorldCupTournement(ITeamService teamService, IMatchService matchService, IResultService resultService)
         {
-            _winningStrategyService = winningStrategyService;
+            _teamService = teamService;
+            _matchService = matchService;
+            _resultService = resultService;
         }
 
         
@@ -27,115 +34,40 @@ namespace BracketGenerator.Models
 
         public void SeedTeams() {
 
-            _currentRoundTeams = TeamsList.Select(teamName => new Team(teamName)).ToList();
+            _currentRoundTeams = _teamService.SeedTeams(TeamsList);
         }
 
         public void ExecuteTournament()
         {
-            // Determine the number of rounds
-            int numberOfRounds = (int)Math.Log2(TeamsList.Count);
-
+            int numberOfRounds = (int)Math.Log2(_currentRoundTeams.Count);
             for (int round = 1; round <= numberOfRounds; round++)
             {
-                int matchesInThisRound = (int)Math.Pow(2, numberOfRounds - round);
-                Console.WriteLine($"\nStarting Round {round} with {matchesInThisRound} matches...");
+                Console.WriteLine($"\nStarting Round {round}...");
 
-                // Generate matches for the current round
-                GenerateMatchesForRound(round);
-                StartMatchesForRound(round);
+                var matches = _matchService.GenerateMatches(_currentRoundTeams);
+                _roundMatches[round] = matches;
+                _currentRoundTeams = _matchService.SimulateMatches(matches);
 
+                foreach (var match in matches)
+                {
+                    Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
+                }
             }
         }
-
-
-
-        // Method to generate matches for a specific round
-        private void GenerateMatchesForRound(int roundNumber)
-        {
-            // Ensure there are enough teams to generate matches for this round
-            if (_currentRoundTeams.Count < 2)
-            {
-                throw new InvalidOperationException("Not enough teams to generate matches for this round.");
-            }
-
-            List<Match> matches = new List<Match>();
-
-            // Generate matches by pairing two teams together
-            for (int i = 0; i < _currentRoundTeams.Count; i += 2)
-            {
-                var match = new Match(_currentRoundTeams[i], _currentRoundTeams[i + 1]);
-                matches.Add(match);
-            }
-
-            // Store matches for the round
-            _roundMatches[roundNumber] = matches;
-
-        }
-
-        // Method to start and simulate matches for a specific round
-        private void StartMatchesForRound(int roundNumber)
-        {
-            if (!_roundMatches.ContainsKey(roundNumber))
-            {
-                throw new InvalidOperationException($"No matches found for round {roundNumber}.");
-            }
-
-            List<Match> matches = _roundMatches[roundNumber];
-            List<Team> winningTeams = new List<Team>();
-
-            // Simulate each match and determine winners
-            matches = _winningStrategyService.ChooseWinner(matches);
-
-            // Update the _roundMatches with the updated match results
-            _roundMatches[roundNumber] = matches;
-
-            foreach (var match in matches)
-            {
-                winningTeams.Add(match.Winner);
-                Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
-            }
-
-            // Prepare teams for the next round
-            _currentRoundTeams = winningTeams;
-        }
-
-
-
-
-
-
-
-
 
 
         // Method to get the tournament winner after the final round
         public void GetTournamentWinner()
         {
-            WiningTeam =  _currentRoundTeams.Count == 1 ? _currentRoundTeams[0] : null;
-            Console.WriteLine($"\nTournament winner is: {WiningTeam?.Name}");
+            _winningTeam = _resultService.DetermineWinner(_currentRoundTeams);
+            _resultService.DisplayWinner(_winningTeam);
         }
 
         // Method to show the path to victory for a specific team
         public void PathToVictory()
         {
-            var path = new List<Team>();
-            var allMatches = _roundMatches.Values.SelectMany(matches => matches).ToList();
-
-            foreach (var match in allMatches)
-            {
-                if (match.Winner == WiningTeam)
-                {
-                    path.Add(match.Team1 == WiningTeam ? match.Team2 : match.Team1);
-                }
-            }
-
-            Console.WriteLine($"\nPath to victory for {WiningTeam.Name}:");
-            foreach (var team in path)
-            {
-                Console.WriteLine(team.Name);
-            }
-
-
+            var path = _resultService.GetPathToVictory(_roundMatches, _winningTeam);
+            _resultService.DisplayPathToVictory(path, _winningTeam);
         }
     }
 }
