@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace BracketGenerator.Interfaces
 {
-    public interface ITournamentFactory
+    public interface ITournamentStrategy
     {
-        public ITournament CreateTournament(Enum x);
+        void SeedTeams();
+
+        void ExecuteTournament();
+
+        void GetTournamentWinner();
+
+        void PathToVictory();
     }
 }

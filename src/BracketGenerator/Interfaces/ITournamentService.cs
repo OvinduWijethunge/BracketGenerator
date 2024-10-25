@@ -10,9 +10,9 @@ namespace BracketGenerator.Services.Interfaces
 {
     public interface ITournamentService
     {
-        void RunTournament(ITournement tournament);
-        void GetTournamentWinner(ITournement tournament);
-        void PathToVictory(ITournement tournament);
+        void RunTournament(ITournament tournament);
+        void GetTournamentWinner(ITournament tournament);
+        void PathToVictory(ITournament tournament);
     }
 
 }

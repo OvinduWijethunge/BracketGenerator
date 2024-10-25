@@ -8,13 +8,13 @@ namespace BracketGenerator.Tests.Services
     public class TournamentServiceTests
     {
         private readonly TournamentService _tournamentService;
-        private readonly Mock<ITournement> _mockTournament;
+        private readonly Mock<ITournament> _mockTournament;
 
         public TournamentServiceTests()
         {
             // Arrange: Initialize the service and the mock
             _tournamentService = new TournamentService();
-            _mockTournament = new Mock<ITournement>();
+            _mockTournament = new Mock<ITournament>();
         }
 
         [Fact]

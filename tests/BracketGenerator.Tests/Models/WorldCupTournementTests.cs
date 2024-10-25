@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using BracketGenerator.Interfaces;
 using BracketGenerator.Models;
 using BracketGenerator.Services;
+using BracketGenerator.Tournamentss;
 
 namespace BracketGenerator.Tests.Models
 {
     public class WorldCupTournamentTests
     {
-        private readonly WorldCupTournement _worldCupTournament;
+        private readonly WorldCupTournament _worldCupTournament;
 
         // Mock dependencies
         private readonly Mock<ITeamService> _mockTeamService;

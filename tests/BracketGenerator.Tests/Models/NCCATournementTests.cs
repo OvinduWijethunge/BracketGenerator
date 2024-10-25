@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using BracketGenerator.Interfaces;
 using BracketGenerator.Models;
 using BracketGenerator.Services;
+using BracketGenerator.Tournamentss;
 
 namespace BracketGenerator.Tests.Models
 {
     public class NCCATournamentTests
     {
-        private readonly NCCATournement _nccaTournament;
+        private readonly NCCATournament _nccaTournament;
 
         // Mock dependencies
         private readonly Mock<ITeamService> _mockTeamService;

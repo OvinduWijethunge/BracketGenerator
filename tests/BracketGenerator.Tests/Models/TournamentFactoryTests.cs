@@ -1,10 +1,11 @@
 ﻿using Xunit;
 using Moq;
-using BracketGenerator.Models;
 using BracketGenerator.Enums;
 using BracketGenerator.Interfaces;
 using BracketGenerator.Services;
 using System;
+using BracketGenerator.Tournamentss;
+using BracketGenerator.Factoriess;
 
 namespace BracketGenerator.Tests.Models
 {
@@ -40,7 +41,7 @@ namespace BracketGenerator.Tests.Models
 
             // Assert
             Assert.NotNull(tournament);
-            Assert.IsType<GroupTournement>(tournament);
+            Assert.IsType<GroupTournament>(tournament);
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace BracketGenerator.Tests.Models
 
             // Assert
             Assert.NotNull(tournament);
-            Assert.IsType<WorldCupTournement>(tournament);
+            Assert.IsType<WorldCupTournament>(tournament);
         }
 
         [Fact]
@@ -62,7 +63,7 @@ namespace BracketGenerator.Tests.Models
 
             // Assert
             Assert.NotNull(tournament);
-            Assert.IsType<NCCATournement>(tournament);
+            Assert.IsType<NCCATournament>(tournament);
         }
 
         [Fact]

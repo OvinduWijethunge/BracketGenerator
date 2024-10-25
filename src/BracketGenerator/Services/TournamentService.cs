@@ -12,7 +12,7 @@ namespace BracketGenerator.Services
     public class TournamentService : ITournamentService
     {
 
-        public void RunTournament(ITournement tournament)
+        public void RunTournament(ITournament tournament)
         {
 
             tournament.SeedTeams();
@@ -20,12 +20,12 @@ namespace BracketGenerator.Services
 
         }
 
-        public void GetTournamentWinner(ITournement tournament)
+        public void GetTournamentWinner(ITournament tournament)
         {
            tournament.GetTournamentWinner();
         }
 
-        public void PathToVictory(ITournement tournament)
+        public void PathToVictory(ITournament tournament)
         {
            tournament.PathToVictory();
 

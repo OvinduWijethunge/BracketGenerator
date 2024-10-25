@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BracketGenerator.Interfaces
 {
-    public interface ITournement
+    public interface ITournament
     {
 
         void SeedTeams();

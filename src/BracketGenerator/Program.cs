@@ -4,21 +4,19 @@ using BracketGenerator.Interfaces;
 using BracketGenerator.Services.Interfaces;
 using BracketGenerator.Services;
 using Microsoft.Extensions.DependencyInjection;
-using BracketGenerator.Models;
 using BracketGenerator.Enums;
 using System;
+using BracketGenerator.Tournamentss;
+using BracketGenerator.Factoriess;
 
 public class Program  
 {
     public static void Main(string[] args)
     {
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ITournement, WorldCupTournement>()
-            .AddSingleton<ITournement, NCCATournement>()
-            .AddSingleton<ITournement, GroupTournement>()
-            .AddTransient<ITeamService, TeamService>()
-            .AddTransient<IMatchService, MatchService>()
-            .AddTransient<IResultService, ResultService>()
+            .AddSingleton<ITournament, WorldCupTournament>()
+            .AddSingleton<ITournament, NCCATournament>()
+            .AddSingleton<ITournament, GroupTournament>()
             .AddTransient<ITournamentService, TournamentService>()
             .AddTransient<ITournamentFactory, TournamentFactory>()
             .BuildServiceProvider();
@@ -40,7 +38,7 @@ public class Program
         int.TryParse(userInput, out int selectedTypeNumber);
         TournamentType selectedTournamentType = (TournamentType)selectedTypeNumber;
 
-        ITournement tournament = tournamentFactory.CreateTournament(selectedTournamentType);
+        ITournament tournament = tournamentFactory.CreateTournament(selectedTournamentType);
 
 
 
