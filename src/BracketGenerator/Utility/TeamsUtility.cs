@@ -8,7 +8,7 @@ namespace BracketGenerator.Utility
 {
     public static class TeamsUtility
     {
-        public static List<string> SimpleTeams()
+        public static List<string> KnockOutTeams()
         {
            
             return new List<string>
@@ -21,7 +21,7 @@ namespace BracketGenerator.Utility
             };
         }
 
-        public static List<string> NCAAFirstRoundTeamsList()
+        public static List<string> QualifierRoundTeams()
         {
 
             return new List<string>
@@ -38,7 +38,7 @@ namespace BracketGenerator.Utility
             };
         }
 
-        public static List<string> NCAALevelATeamsList()
+        public static List<string> MainTournamentTeams()
         {
 
             return new List<string>
@@ -56,7 +56,7 @@ namespace BracketGenerator.Utility
         }
 
 
-        public static List<string> GroupAList()
+        public static List<string> GroupATeams()
         {
 
             return new List<string>
@@ -67,7 +67,7 @@ namespace BracketGenerator.Utility
         }
 
 
-        public static List<string> GroupBList()
+        public static List<string> GroupBTeams()
         {
 
             return new List<string>
@@ -77,7 +77,7 @@ namespace BracketGenerator.Utility
             };
         }
 
-        public static List<string> GroupCList()
+        public static List<string> GroupCTeams()
         {
 
             return new List<string>
@@ -88,7 +88,7 @@ namespace BracketGenerator.Utility
         }
 
 
-        public static List<string> GroupDList()
+        public static List<string> GroupDTeams()
         {
 
             return new List<string>
@@ -98,7 +98,7 @@ namespace BracketGenerator.Utility
             };
         }
 
-        public static List<string> GroupEList()
+        public static List<string> GroupETeams()
         {
 
             return new List<string>
@@ -108,7 +108,7 @@ namespace BracketGenerator.Utility
             };
         }
 
-        public static List<string> GroupFList()
+        public static List<string> GroupFTeams()
         {
 
             return new List<string>
@@ -118,7 +118,7 @@ namespace BracketGenerator.Utility
             };
         }
 
-        public static List<string> GroupGList()
+        public static List<string> GroupGTeams()
         {
 
             return new List<string>
@@ -128,7 +128,7 @@ namespace BracketGenerator.Utility
             };
         }
 
-        public static List<string> GroupHList()
+        public static List<string> GroupHTeams()
         {
 
             return new List<string>

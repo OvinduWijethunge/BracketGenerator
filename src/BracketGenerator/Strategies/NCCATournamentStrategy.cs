@@ -12,127 +12,92 @@ namespace BracketGenerator.Strategies
 {
     public class NCCATournamentStrategy : ITournamentStrategy
     {
-        private readonly Dictionary<int, List<Match>> _roundMatches = new Dictionary<int, List<Match>>(); // Stores matches by round number
-        private List<Team> _currentRoundTeams = new List<Team>(); // Teams for the current round
-        private List<Team> _firstRoundTeams = new List<Team>(); // Teams for the first round
+        private readonly Dictionary<int, List<Match>> roundBasedMatchStorage = new Dictionary<int, List<Match>>(); // Stores matches by round number
+
+        private List<Team> qualifierRoundTeams = new List<Team>(); // Teams for the first round
+        private List<Team> currentRoundTeams = new List<Team>(); // Teams for the current round
+
         private Team _winningTeam;
-        private static List<string> FirstRoundTeamsList => TeamsUtility.NCAAFirstRoundTeamsList();
-        private static List<string> TopLevelTeamsList => TeamsUtility.NCAALevelATeamsList();
+        private static List<string> QualifierRoundTeamsList => TeamsUtility.QualifierRoundTeams();
+        private static List<string> MainTournamentTeamsList => TeamsUtility.MainTournamentTeams();
 
-        private IMatchService _matchService;
 
-        public NCCATournamentStrategy(IMatchService matchService)
+
+        private ISharedService _sharedService;
+
+        public NCCATournamentStrategy(ISharedService sharedService)
         {
-            _matchService = matchService;
+            _sharedService = sharedService;
         }
         public void SeedTeams()
         {
-            _firstRoundTeams = FirstRoundTeamsList.Select(name => new Team(name)).ToList();
-            _currentRoundTeams = TopLevelTeamsList.Select(name => new Team(name)).ToList();
+            qualifierRoundTeams = QualifierRoundTeamsList.Select(name => new Team(name)).ToList();
+            currentRoundTeams = MainTournamentTeamsList.Select(name => new Team(name)).ToList();
         }
 
 
         public void ExecuteTournament()
         {
-            Console.WriteLine("Starting First Round...");
-            InitializeFirstRoundMatches();
+            Console.WriteLine("Starting Qualifier Round...");
+            InitializeQualifierRoundMatches();
 
             // Execute the subsequent rounds until a winner is found
-            int totalRounds = (int)Math.Log2(_currentRoundTeams.Count);
+            int totalRounds = (int)Math.Log2(currentRoundTeams.Count);
             for (int round = 1; round <= totalRounds; round++)
             {
                 Console.WriteLine($"Starting Round {round + 1}...");
-                ExecuteRound(round);
+                ExecuteMainTournament(round);
             }
         }
 
-        private void InitializeFirstRoundMatches()
+        private void InitializeQualifierRoundMatches()
         {// Generate and simulate first round matches using the match service
-            var firstRoundMatches = GenerateMatches(_firstRoundTeams);
-            _roundMatches[0] = firstRoundMatches;
-            _firstRoundTeams = SimulateMatches(firstRoundMatches);
+            var qualifierRoundMatches = _sharedService.GenerateMatches(qualifierRoundTeams);
+            roundBasedMatchStorage[0] = qualifierRoundMatches;
+            qualifierRoundTeams = _sharedService.SimulateMatches(qualifierRoundMatches);
 
-            FillCurrentRoundTeams();
+            AddQualifiedTeamstoMainTournament();
         }
 
-
-        private List<Match> GenerateMatches(List<Team> teams)
+        private void AddQualifiedTeamstoMainTournament()
         {
-            var matches = new List<Match>();
-
-            if (teams.Count % 2 == 1)
+            // Replace placeholders in top-level teams with winners of qualifier round
+            int teamIndex = 0;
+            for (int i = 0; i < currentRoundTeams.Count; i++)
             {
-
-                return matches;
-            }
-            else
-            {
-
-                for (int i = 0; i < teams.Count; i += 2)
+                if (currentRoundTeams[i].Name == " " && teamIndex < qualifierRoundTeams.Count)
                 {
-                    if (i + 1 < teams.Count)
-                    {
-                        matches.Add(new Match(teams[i], teams[i + 1]));
-                    }
+                    currentRoundTeams[i].Name = qualifierRoundTeams[teamIndex].Name;
+                    teamIndex++;
                 }
-
-                return matches;
             }
-
         }
 
-
-        private List<Team> SimulateMatches(List<Match> matches)
+        private void ExecuteMainTournament(int roundNumber)
         {
-            List<Team> winningTeams = new List<Team>();
-            matches = _matchService.DecideWinners(matches);
-
-            foreach (var match in matches)
-            {
-                winningTeams.Add(match.Winner);
-                Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
-            }
-
-            return winningTeams;
-        }
-
-        private void ExecuteRound(int roundNumber)
-        {
-            if (_currentRoundTeams.Count < 2)
+            if (currentRoundTeams.Count < 2)
             {
                 throw new InvalidOperationException("Not enough teams to generate matches for this round.");
             }
 
-            var roundMatches = GenerateMatches(_currentRoundTeams);
-            _roundMatches[roundNumber] = roundMatches;
+            var roundMatches = _sharedService.GenerateMatches(currentRoundTeams);
+            roundBasedMatchStorage[roundNumber] = roundMatches;
 
-            _currentRoundTeams = SimulateMatches(roundMatches);
+            currentRoundTeams = _sharedService.SimulateMatches(roundMatches);
         }
 
-        private void FillCurrentRoundTeams()
-        {
-            // Replace placeholders in top-level teams with first-round winners
-            int additionalTeamIndex = 0;
-            for (int i = 0; i < _currentRoundTeams.Count; i++)
-            {
-                if (_currentRoundTeams[i].Name == " " && additionalTeamIndex < _firstRoundTeams.Count)
-                {
-                    _currentRoundTeams[i].Name = _firstRoundTeams[additionalTeamIndex].Name;
-                    additionalTeamIndex++;
-                }
-            }
-        }
+
 
         public void DisplayTournamentWinner()
         {
-            _winningTeam = _currentRoundTeams.Count == 1 ? _currentRoundTeams[0] : null;
+            _winningTeam = currentRoundTeams.Count == 1 ? currentRoundTeams[0] : null;
             Console.WriteLine($"\nTournament winner is: {_winningTeam?.Name}");
         }
 
         public void PathToVictory()
         {
             var path = new List<Team>();
-            var allMatches = _roundMatches.Values.SelectMany(matches => matches).ToList();
+            var allMatches = roundBasedMatchStorage.Values.SelectMany(matches => matches).ToList();
 
             foreach (var match in allMatches)
             {
@@ -151,6 +116,6 @@ namespace BracketGenerator.Strategies
 
         }
 
-       
+
     }
 }

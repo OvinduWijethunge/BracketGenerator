@@ -13,58 +13,53 @@ namespace BracketGenerator.Strategies
     public class GroupTournamentStrategy : ITournamentStrategy
     {
         // Dictionary to store teams and matches by group
-        private readonly Dictionary<string, List<Team>> _groupTeams = new Dictionary<string, List<Team>>();
-        private readonly Dictionary<string, List<Match>> _groupMatches = new Dictionary<string, List<Match>>();
+        private readonly Dictionary<string, List<Team>> groupBasedTeamStorage = new Dictionary<string, List<Team>>();
+        private readonly Dictionary<string, List<Match>> groupBasedMatchStorage = new Dictionary<string, List<Match>>();
+
         // Group list initialization
-        private List<string> GroupATeamsList => TeamsUtility.GroupAList();
-        private List<string> GroupBTeamsList => TeamsUtility.GroupBList();
-        private List<string> GroupCTeamsList => TeamsUtility.GroupCList();
-        private List<string> GroupDTeamsList => TeamsUtility.GroupDList();
-        private List<string> GroupETeamsList => TeamsUtility.GroupEList();
-        private List<string> GroupFTeamsList => TeamsUtility.GroupFList();
-        private List<string> GroupGTeamsList => TeamsUtility.GroupGList();
-        private List<string> GroupHTeamsList => TeamsUtility.GroupHList();
+        private List<string> GroupATeamsList => TeamsUtility.GroupATeams();
+        private List<string> GroupBTeamsList => TeamsUtility.GroupBTeams();
+        private List<string> GroupCTeamsList => TeamsUtility.GroupCTeams();
+        private List<string> GroupDTeamsList => TeamsUtility.GroupDTeams();
+        private List<string> GroupETeamsList => TeamsUtility.GroupETeams();
+        private List<string> GroupFTeamsList => TeamsUtility.GroupFTeams();
+        private List<string> GroupGTeamsList => TeamsUtility.GroupGTeams();
+        private List<string> GroupHTeamsList => TeamsUtility.GroupHTeams();
 
-        private IMatchService _matchService;
-
-        public GroupTournamentStrategy(IMatchService matchService)
+        private ISharedService _sharedService;
+        public GroupTournamentStrategy(ISharedService sharedService)
         {
-            _matchService = matchService;
+            _sharedService = sharedService;
         }
 
         public void SeedTeams()
         {
-            _groupTeams["A"] = GroupATeamsList.Select(name => new Team(name)).ToList();
-            _groupTeams["B"] = GroupBTeamsList.Select(name => new Team(name)).ToList();
-            _groupTeams["C"] = GroupCTeamsList.Select(name => new Team(name)).ToList();
-            _groupTeams["D"] = GroupDTeamsList.Select(name => new Team(name)).ToList();
-            _groupTeams["E"] = GroupETeamsList.Select(name => new Team(name)).ToList();
-            _groupTeams["F"] = GroupFTeamsList.Select(name => new Team(name)).ToList();
-            _groupTeams["G"] = GroupGTeamsList.Select(name => new Team(name)).ToList();
-            _groupTeams["H"] = GroupHTeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["A"] = GroupATeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["B"] = GroupBTeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["C"] = GroupCTeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["D"] = GroupDTeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["E"] = GroupETeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["F"] = GroupFTeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["G"] = GroupGTeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["H"] = GroupHTeamsList.Select(name => new Team(name)).ToList();
         }
 
 
         public void ExecuteTournament()
         {
-            foreach (var group in _groupTeams.Keys)
+            foreach (var group in groupBasedTeamStorage.Keys)
             {
-                // Use the adapted IMatchService to generate group matches
-                _groupMatches[group] = GenerateGroupMatches(_groupTeams[group]);
-
-                // Simulate the matches for the group
+                groupBasedMatchStorage[group] = GenerateGroupMatches(groupBasedTeamStorage[group]);
                 Console.WriteLine($"\nGroup {group} Matches:");
-                var groupWinners = SimulateMatches(_groupMatches[group]);
-
-                //  Display top 2 teams in the group
+                var groupWinners = _sharedService.SimulateMatches(groupBasedMatchStorage[group]);
                 DisplayTopTeams(groupWinners, group);
             }
         }
 
+
         private List<Match> GenerateGroupMatches(List<Team> teams)
         {
             var matches = new List<Match>();
-
             // Round-robin match generation for groups
             for (int i = 0; i < teams.Count; i++)
             {
@@ -73,23 +68,9 @@ namespace BracketGenerator.Strategies
                     matches.Add(new Match(teams[i], teams[j]));
                 }
             }
-
             return matches;
         }
 
-        private List<Team> SimulateMatches(List<Match> matches)
-        {
-            List<Team> winningTeams = new List<Team>();
-            matches = _matchService.DecideWinners(matches);
-
-            foreach (var match in matches)
-            {
-                winningTeams.Add(match.Winner);
-                Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
-            }
-
-            return winningTeams;
-        }
 
         private void DisplayTopTeams(List<Team> winningTeams, string groupName)
         {
@@ -104,7 +85,6 @@ namespace BracketGenerator.Strategies
             foreach (var team in topTeams)
             {
                 Console.WriteLine($"{team.Team.Name} - {team.Wins} Wins in group stage");
-                // _groupStageWinningTeams.Add(team.Team.Name);
             }
 
         }

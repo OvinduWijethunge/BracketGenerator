@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BracketGenerator.Strategies
 {
     public class StrategyContext
-    { 
+    {
         private ITournamentStrategy _strategy;
         public StrategyContext() { }
 
@@ -29,14 +29,16 @@ namespace BracketGenerator.Strategies
             _strategy.ExecuteTournament();
         }
 
-        public void DisplayTournamentWinner() { 
-          
+        public void DisplayTournamentWinner()
+        {
+
             _strategy.DisplayTournamentWinner();
         }
 
-        public void PathToVictory() {
+        public void PathToVictory()
+        {
 
-          _strategy.PathToVictory();
+            _strategy.PathToVictory();
         }
 
     }

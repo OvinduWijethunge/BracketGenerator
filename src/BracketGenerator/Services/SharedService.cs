@@ -8,9 +8,47 @@ using System.Threading.Tasks;
 
 namespace BracketGenerator.Services
 {
-    public class MatchService : IMatchService
+    public class SharedService : ISharedService
     {
-        public List<Match> DecideWinners(List<Match> MatchList)
+
+
+
+        public List<Match> GenerateMatches(List<Team> teams)
+        {
+            var matches = new List<Match>();
+
+
+
+            for (int i = 0; i < teams.Count; i += 2)
+            {
+                if (i + 1 < teams.Count)
+                {
+                    matches.Add(new Match(teams[i], teams[i + 1]));
+                }
+            }
+
+            return matches;
+
+
+        }
+
+
+        public List<Team> SimulateMatches(List<Match> matches)
+        {
+            List<Team> winningTeams = new List<Team>();
+            matches = DecideWinners(matches);
+
+            foreach (var match in matches)
+            {
+                winningTeams.Add(match.Winner);
+                Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
+            }
+
+            return winningTeams;
+        }
+
+
+        private List<Match> DecideWinners(List<Match> MatchList)
         {
             var random = new Random();
 

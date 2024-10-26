@@ -8,8 +8,8 @@ namespace BracketGenerator.Enums
 {
     public enum TournamentType
     {
-        Knockout,
-        NCAA,
-        Group
+        Knockout = 1,
+        NCAA = 2,
+        Group = 3
     }
 }

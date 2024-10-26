@@ -12,72 +12,38 @@ namespace BracketGenerator.Strategies
 {
     public class WorldCupTournamentStrategy : ITournamentStrategy
     {
-        private Dictionary<int, List<Match>> _roundMatches = new Dictionary<int, List<Match>>(); // Stores matches by round number
-        private List<Team> _currentRoundTeams = new List<Team>(); // Teams for the current round
-        public List<string> KnockOutTeamList = TeamsUtility.SimpleTeams();
+        private Dictionary<int, List<Match>> roundBasedMatchStorage = new Dictionary<int, List<Match>>(); // Stores matches by round number
+        private List<Team> currentRoundTeams = new List<Team>(); // Teams for the current round
+        public List<string> KnockOutTeamList = TeamsUtility.KnockOutTeams();
         private Team _winningTeam;
 
-        private IMatchService _matchService;
+        private ISharedService _sharedService;
 
-        public WorldCupTournamentStrategy(IMatchService matchService)
+        public WorldCupTournamentStrategy(ISharedService sharedService)
         {
-            _matchService = matchService;
+            _sharedService = sharedService;
         }
         public void SeedTeams()
         {
-            _currentRoundTeams = KnockOutTeamList.Select(name => new Team(name)).ToList();
+            currentRoundTeams = KnockOutTeamList.Select(name => new Team(name)).ToList();
         }
         public void ExecuteTournament()
         {
-            int numberOfRounds = (int)Math.Log2(_currentRoundTeams.Count);
+            int numberOfRounds = (int)Math.Log2(currentRoundTeams.Count);
             for (int round = 1; round <= numberOfRounds; round++)
             {
                 Console.WriteLine($"\nStarting Round {round}...");
 
-                var matches = GenerateMatches(_currentRoundTeams);
-                _roundMatches[round] = matches;
-                _currentRoundTeams = SimulateMatches(matches);
+                var matches = _sharedService.GenerateMatches(currentRoundTeams);
+                roundBasedMatchStorage[round] = matches;
+                currentRoundTeams = _sharedService.SimulateMatches(matches);
             }
-        }
-
-
-        private List<Match> GenerateMatches(List<Team> teams)
-        {
-            var matches = new List<Match>();
-
-            
-
-                for (int i = 0; i < teams.Count; i += 2)
-                {
-                    if (i + 1 < teams.Count)
-                    {
-                        matches.Add(new Match(teams[i], teams[i + 1]));
-                    }
-                }
-
-                return matches;
-            
-
-        }
-
-        private List<Team> SimulateMatches(List<Match> matches)
-        {
-            List<Team> winningTeams = new List<Team>();
-            matches = _matchService.DecideWinners(matches);
-
-            foreach (var match in matches)
-            {
-                winningTeams.Add(match.Winner);
-                Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
-            }
-
-            return winningTeams;
         }
 
 
         public void DisplayTournamentWinner()
         {
-            _winningTeam = _currentRoundTeams.Count == 1 ? _currentRoundTeams[0] : null;
+            _winningTeam = currentRoundTeams.Count == 1 ? currentRoundTeams[0] : null;
             Console.WriteLine($"\nTournament winner is: {_winningTeam?.Name}");
         }
 
@@ -87,7 +53,7 @@ namespace BracketGenerator.Strategies
         public void PathToVictory()
         {
             var path = new List<Team>();
-            var allMatches = _roundMatches.Values.SelectMany(matches => matches).ToList();
+            var allMatches = roundBasedMatchStorage.Values.SelectMany(matches => matches).ToList();
 
             foreach (var match in allMatches)
             {

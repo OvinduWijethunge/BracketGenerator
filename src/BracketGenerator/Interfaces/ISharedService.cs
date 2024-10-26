@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace BracketGenerator.Interfaces
 {
-    public interface IMatchService
+    public interface ISharedService
     {
-        List<Match> DecideWinners(List<Match> MatchList);
+        List<Match> GenerateMatches(List<Team> teams);
+        List<Team> SimulateMatches(List<Match> matches);
+
     }
 }

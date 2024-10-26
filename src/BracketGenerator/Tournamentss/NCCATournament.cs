@@ -10,13 +10,13 @@ namespace BracketGenerator.Tournamentss
 {
     public class NCCATournament : ITournament
     {
-       // StrategyContext context = new StrategyContext();
+        // StrategyContext context = new StrategyContext();
         private readonly StrategyContext _context;
 
         public NCCATournament(StrategyContext context)
         {
             _context = context;
-            _context.SetStrategy(new NCCATournamentStrategy(new MatchService()));
+            _context.SetStrategy(new NCCATournamentStrategy(new SharedService()));
         }
 
         public void SeedTeams()

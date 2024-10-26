@@ -8,7 +8,7 @@ using System;
 using BracketGenerator.Tournamentss;
 using BracketGenerator.Factoriess;
 
-public class Program  
+public class Program
 {
     public static void Main(string[] args)
     {
@@ -16,7 +16,7 @@ public class Program
             .AddSingleton<ITournament, WorldCupTournament>()
             .AddSingleton<ITournament, NCCATournament>()
             .AddSingleton<ITournament, GroupTournament>()
-            .AddTransient<IMatchService, MatchService>()
+            .AddTransient<ISharedService, SharedService>()
             .AddTransient<ITournamentFactory, TournamentFactory>()
             .BuildServiceProvider();
 
@@ -25,12 +25,12 @@ public class Program
 
 
         Console.WriteLine("Select a tournament type:");
-        Console.WriteLine("0 - Knockout");
-        Console.WriteLine("1 - NCAA,");
-        Console.WriteLine("2 - Group");
+        Console.WriteLine("1 - Knockout");
+        Console.WriteLine("2 - NCAA,");
+        Console.WriteLine("3 - Group");
 
         // Get user input
-        Console.Write("Enter your choice (0-2): ");
+        Console.Write("Enter your choice (1-3): ");
         string userInput = Console.ReadLine();
 
         int.TryParse(userInput, out int selectedTypeNumber);
@@ -42,6 +42,6 @@ public class Program
         tournament.ExecuteTournament();
         tournament.DisplayTournamentWinner();
         tournament.PathToVictory();
-        
+
     }
 }
