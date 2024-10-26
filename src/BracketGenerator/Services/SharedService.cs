@@ -17,8 +17,6 @@ namespace BracketGenerator.Services
         {
             var matches = new List<Match>();
 
-
-
             for (int i = 0; i < teams.Count; i += 2)
             {
                 if (i + 1 < teams.Count)

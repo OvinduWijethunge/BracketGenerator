@@ -16,7 +16,7 @@ namespace BracketGenerator.Tournamentss
         public GroupTournament(StrategyContext context)
         {
             _context = context;
-            _context.SetStrategy(new GroupTournamentStrategy(new SharedService()));
+            _context.SetStrategy(new GroupTournamentStrategy(new SharedService(), new GroupTournamentService()));
 
         }
 

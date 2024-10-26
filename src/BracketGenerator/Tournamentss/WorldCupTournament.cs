@@ -19,7 +19,7 @@ namespace BracketGenerator.Tournamentss
 
             _context = context ?? throw new ArgumentNullException(nameof(context));
             // Initialize the context with a specific strategy
-            _context.SetStrategy(new WorldCupTournamentStrategy(new SharedService()));
+            _context.SetStrategy(new WorldCupTournamentStrategy(new SharedService(), new WorldCupTournamentService()));
         }
 
 

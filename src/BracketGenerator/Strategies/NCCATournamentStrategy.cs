@@ -23,23 +23,25 @@ namespace BracketGenerator.Strategies
 
 
 
-        private ISharedService _sharedService;
+        private readonly ISharedService _sharedService;
+        private readonly INCCATournamentService _nCCATournamentService;
 
-        public NCCATournamentStrategy(ISharedService sharedService)
+        public NCCATournamentStrategy(ISharedService sharedService, INCCATournamentService nCCATournamentService)
         {
             _sharedService = sharedService;
+            _nCCATournamentService = nCCATournamentService;
         }
         public void SeedTeams()
         {
-            qualifierRoundTeams = QualifierRoundTeamsList.Select(name => new Team(name)).ToList();
-            currentRoundTeams = MainTournamentTeamsList.Select(name => new Team(name)).ToList();
+            qualifierRoundTeams = _nCCATournamentService.SeedTeams(QualifierRoundTeamsList);//.Select(name => new Team(name)).ToList();
+            currentRoundTeams = _nCCATournamentService.SeedTeams(MainTournamentTeamsList);//.Select(name => new Team(name)).ToList();
         }
 
 
         public void ExecuteTournament()
         {
             Console.WriteLine("Starting Qualifier Round...");
-            InitializeQualifierRoundMatches();
+            ExecuteQualifierRoundMatches();
 
             // Execute the subsequent rounds until a winner is found
             int totalRounds = (int)Math.Log2(currentRoundTeams.Count);
@@ -50,7 +52,7 @@ namespace BracketGenerator.Strategies
             }
         }
 
-        private void InitializeQualifierRoundMatches()
+        private void ExecuteQualifierRoundMatches()
         {// Generate and simulate first round matches using the match service
             var qualifierRoundMatches = _sharedService.GenerateMatches(qualifierRoundTeams);
             roundBasedMatchStorage[0] = qualifierRoundMatches;
@@ -61,16 +63,7 @@ namespace BracketGenerator.Strategies
 
         private void AddQualifiedTeamstoMainTournament()
         {
-            // Replace placeholders in top-level teams with winners of qualifier round
-            int teamIndex = 0;
-            for (int i = 0; i < currentRoundTeams.Count; i++)
-            {
-                if (currentRoundTeams[i].Name == " " && teamIndex < qualifierRoundTeams.Count)
-                {
-                    currentRoundTeams[i].Name = qualifierRoundTeams[teamIndex].Name;
-                    teamIndex++;
-                }
-            }
+            currentRoundTeams =  _nCCATournamentService.AssignQualifiedTeamsToMainTournament(qualifierRoundTeams, currentRoundTeams);
         }
 
         private void ExecuteMainTournament(int roundNumber)
@@ -90,29 +83,12 @@ namespace BracketGenerator.Strategies
 
         public void DisplayTournamentWinner()
         {
-            _winningTeam = currentRoundTeams.Count == 1 ? currentRoundTeams[0] : null;
-            Console.WriteLine($"\nTournament winner is: {_winningTeam?.Name}");
+            _winningTeam = _nCCATournamentService.DetermineTournamentWinner(currentRoundTeams);
         }
 
         public void PathToVictory()
         {
-            var path = new List<Team>();
-            var allMatches = roundBasedMatchStorage.Values.SelectMany(matches => matches).ToList();
-
-            foreach (var match in allMatches)
-            {
-                if (match.Winner == _winningTeam)
-                {
-                    path.Add(match.Team1 == _winningTeam ? match.Team2 : match.Team1);
-                }
-            }
-
-            Console.WriteLine($"\nPath to victory for {_winningTeam?.Name}:");
-            foreach (var team in path)
-            {
-                Console.WriteLine(team.Name);
-
-            }
+            _nCCATournamentService.DeterminePathToVictory(roundBasedMatchStorage, _winningTeam);
 
         }
 

@@ -17,6 +17,7 @@ public class Program
             .AddSingleton<ITournament, NCCATournament>()
             .AddSingleton<ITournament, GroupTournament>()
             .AddTransient<ISharedService, SharedService>()
+            .AddTransient<IWorldCupTournamentService, WorldCupTournamentService>()
             .AddTransient<ITournamentFactory, TournamentFactory>()
             .BuildServiceProvider();
 

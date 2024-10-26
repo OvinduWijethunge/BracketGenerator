@@ -26,22 +26,24 @@ namespace BracketGenerator.Strategies
         private List<string> GroupGTeamsList => TeamsUtility.GroupGTeams();
         private List<string> GroupHTeamsList => TeamsUtility.GroupHTeams();
 
-        private ISharedService _sharedService;
-        public GroupTournamentStrategy(ISharedService sharedService)
+        private readonly ISharedService _sharedService;
+        private readonly IGroupTournamentService _groupTournamentService;
+        public GroupTournamentStrategy(ISharedService sharedService, IGroupTournamentService groupTournamentService)
         {
             _sharedService = sharedService;
+            _groupTournamentService = groupTournamentService;
         }
 
         public void SeedTeams()
         {
-            groupBasedTeamStorage["A"] = GroupATeamsList.Select(name => new Team(name)).ToList();
-            groupBasedTeamStorage["B"] = GroupBTeamsList.Select(name => new Team(name)).ToList();
-            groupBasedTeamStorage["C"] = GroupCTeamsList.Select(name => new Team(name)).ToList();
-            groupBasedTeamStorage["D"] = GroupDTeamsList.Select(name => new Team(name)).ToList();
-            groupBasedTeamStorage["E"] = GroupETeamsList.Select(name => new Team(name)).ToList();
-            groupBasedTeamStorage["F"] = GroupFTeamsList.Select(name => new Team(name)).ToList();
-            groupBasedTeamStorage["G"] = GroupGTeamsList.Select(name => new Team(name)).ToList();
-            groupBasedTeamStorage["H"] = GroupHTeamsList.Select(name => new Team(name)).ToList();
+            groupBasedTeamStorage["A"] = _groupTournamentService.SeedTeams(GroupATeamsList); 
+            groupBasedTeamStorage["B"] = _groupTournamentService.SeedTeams(GroupBTeamsList);
+            groupBasedTeamStorage["C"] = _groupTournamentService.SeedTeams(GroupCTeamsList);
+            groupBasedTeamStorage["D"] = _groupTournamentService.SeedTeams(GroupDTeamsList);
+            groupBasedTeamStorage["E"] = _groupTournamentService.SeedTeams(GroupETeamsList);
+            groupBasedTeamStorage["F"] = _groupTournamentService.SeedTeams(GroupFTeamsList);
+            groupBasedTeamStorage["G"] = _groupTournamentService.SeedTeams(GroupGTeamsList);
+            groupBasedTeamStorage["H"] = _groupTournamentService.SeedTeams(GroupHTeamsList);
         }
 
 
@@ -49,45 +51,13 @@ namespace BracketGenerator.Strategies
         {
             foreach (var group in groupBasedTeamStorage.Keys)
             {
-                groupBasedMatchStorage[group] = GenerateGroupMatches(groupBasedTeamStorage[group]);
+                groupBasedMatchStorage[group] = _groupTournamentService.GenerateGroupMatches(groupBasedTeamStorage[group]);
                 Console.WriteLine($"\nGroup {group} Matches:");
                 var groupWinners = _sharedService.SimulateMatches(groupBasedMatchStorage[group]);
-                DisplayTopTeams(groupWinners, group);
+                _groupTournamentService.DisplayTopTeams(groupWinners, group);
             }
         }
 
-
-        private List<Match> GenerateGroupMatches(List<Team> teams)
-        {
-            var matches = new List<Match>();
-            // Round-robin match generation for groups
-            for (int i = 0; i < teams.Count; i++)
-            {
-                for (int j = i + 1; j < teams.Count; j++)
-                {
-                    matches.Add(new Match(teams[i], teams[j]));
-                }
-            }
-            return matches;
-        }
-
-
-        private void DisplayTopTeams(List<Team> winningTeams, string groupName)
-        {
-            // Get top 2 teams based on the number of wins in descending order
-            var topTeams = winningTeams
-                .GroupBy(team => team)
-                .Select(group => new { Team = group.Key, Wins = group.Count() })
-                .OrderByDescending(team => team.Wins)
-                .Take(2);
-
-            Console.WriteLine($"\nTop 2 Teams in Group {groupName}:");
-            foreach (var team in topTeams)
-            {
-                Console.WriteLine($"{team.Team.Name} - {team.Wins} Wins in group stage");
-            }
-
-        }
 
         public void DisplayTournamentWinner()
         {
