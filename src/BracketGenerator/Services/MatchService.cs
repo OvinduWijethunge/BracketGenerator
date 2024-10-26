@@ -1,15 +1,16 @@
-﻿using BracketGenerator.Models;
+﻿using BracketGenerator.Interfaces;
+using BracketGenerator.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BracketGenerator.Utility
+namespace BracketGenerator.Services
 {
-    public static class MatchUtility
+    public class MatchService : IMatchService
     {
-        public static List<Match> ChooseWinner(List<Match> MatchList)
+        public List<Match> DecideWinners(List<Match> MatchList)
         {
             var random = new Random();
 

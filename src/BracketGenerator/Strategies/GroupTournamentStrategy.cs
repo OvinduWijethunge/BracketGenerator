@@ -16,14 +16,21 @@ namespace BracketGenerator.Strategies
         private readonly Dictionary<string, List<Team>> _groupTeams = new Dictionary<string, List<Team>>();
         private readonly Dictionary<string, List<Match>> _groupMatches = new Dictionary<string, List<Match>>();
         // Group list initialization
-        private List<string> GroupATeamsList => TeamsUtilities.GroupAList();
-        private List<string> GroupBTeamsList => TeamsUtilities.GroupBList();
-        private List<string> GroupCTeamsList => TeamsUtilities.GroupCList();
-        private List<string> GroupDTeamsList => TeamsUtilities.GroupDList();
-        private List<string> GroupETeamsList => TeamsUtilities.GroupEList();
-        private List<string> GroupFTeamsList => TeamsUtilities.GroupFList();
-        private List<string> GroupGTeamsList => TeamsUtilities.GroupGList();
-        private List<string> GroupHTeamsList => TeamsUtilities.GroupHList();
+        private List<string> GroupATeamsList => TeamsUtility.GroupAList();
+        private List<string> GroupBTeamsList => TeamsUtility.GroupBList();
+        private List<string> GroupCTeamsList => TeamsUtility.GroupCList();
+        private List<string> GroupDTeamsList => TeamsUtility.GroupDList();
+        private List<string> GroupETeamsList => TeamsUtility.GroupEList();
+        private List<string> GroupFTeamsList => TeamsUtility.GroupFList();
+        private List<string> GroupGTeamsList => TeamsUtility.GroupGList();
+        private List<string> GroupHTeamsList => TeamsUtility.GroupHList();
+
+        private IMatchService _matchService;
+
+        public GroupTournamentStrategy(IMatchService matchService)
+        {
+            _matchService = matchService;
+        }
 
         public void SeedTeams()
         {
@@ -73,7 +80,7 @@ namespace BracketGenerator.Strategies
         private List<Team> SimulateMatches(List<Match> matches)
         {
             List<Team> winningTeams = new List<Team>();
-            matches = MatchUtility.ChooseWinner(matches);
+            matches = _matchService.DecideWinners(matches);
 
             foreach (var match in matches)
             {
@@ -102,7 +109,7 @@ namespace BracketGenerator.Strategies
 
         }
 
-        public void GetTournamentWinner()
+        public void DisplayTournamentWinner()
         {
             Console.WriteLine("\nNo tournament winner can be determined yet, as the tournament is currently in the group stage.");
         }

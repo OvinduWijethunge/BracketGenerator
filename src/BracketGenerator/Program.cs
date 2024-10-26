@@ -1,7 +1,6 @@
 ﻿
 
 using BracketGenerator.Interfaces;
-using BracketGenerator.Services.Interfaces;
 using BracketGenerator.Services;
 using Microsoft.Extensions.DependencyInjection;
 using BracketGenerator.Enums;
@@ -17,11 +16,10 @@ public class Program
             .AddSingleton<ITournament, WorldCupTournament>()
             .AddSingleton<ITournament, NCCATournament>()
             .AddSingleton<ITournament, GroupTournament>()
-            .AddTransient<ITournamentService, TournamentService>()
+            .AddTransient<IMatchService, MatchService>()
             .AddTransient<ITournamentFactory, TournamentFactory>()
             .BuildServiceProvider();
 
-        var tournamentService = serviceProvider.GetService<ITournamentService>(); 
         var tournamentFactory = serviceProvider.GetService<ITournamentFactory>();
 
 
@@ -40,19 +38,10 @@ public class Program
 
         ITournament tournament = tournamentFactory.CreateTournament(selectedTournamentType);
 
-
-
-        tournamentService.RunTournament(tournament);
-
-
-
-        // Get tournament winner
-        tournamentService.GetTournamentWinner(tournament);
-
-
-
-        // Get path to winner
-        tournamentService.PathToVictory(tournament);
+        tournament.SeedTeams();
+        tournament.ExecuteTournament();
+        tournament.DisplayTournamentWinner();
+        tournament.PathToVictory();
         
     }
 }

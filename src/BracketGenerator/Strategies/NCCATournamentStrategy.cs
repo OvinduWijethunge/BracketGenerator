@@ -16,9 +16,15 @@ namespace BracketGenerator.Strategies
         private List<Team> _currentRoundTeams = new List<Team>(); // Teams for the current round
         private List<Team> _firstRoundTeams = new List<Team>(); // Teams for the first round
         private Team _winningTeam;
-        private static List<string> FirstRoundTeamsList => TeamsUtilities.NCAAFirstRoundTeamsList();
-        private static List<string> TopLevelTeamsList => TeamsUtilities.NCAALevelATeamsList();
+        private static List<string> FirstRoundTeamsList => TeamsUtility.NCAAFirstRoundTeamsList();
+        private static List<string> TopLevelTeamsList => TeamsUtility.NCAALevelATeamsList();
 
+        private IMatchService _matchService;
+
+        public NCCATournamentStrategy(IMatchService matchService)
+        {
+            _matchService = matchService;
+        }
         public void SeedTeams()
         {
             _firstRoundTeams = FirstRoundTeamsList.Select(name => new Team(name)).ToList();
@@ -79,7 +85,7 @@ namespace BracketGenerator.Strategies
         private List<Team> SimulateMatches(List<Match> matches)
         {
             List<Team> winningTeams = new List<Team>();
-            matches = MatchUtility.ChooseWinner(matches);
+            matches = _matchService.DecideWinners(matches);
 
             foreach (var match in matches)
             {
@@ -117,7 +123,7 @@ namespace BracketGenerator.Strategies
             }
         }
 
-        public void GetTournamentWinner()
+        public void DisplayTournamentWinner()
         {
             _winningTeam = _currentRoundTeams.Count == 1 ? _currentRoundTeams[0] : null;
             Console.WriteLine($"\nTournament winner is: {_winningTeam?.Name}");

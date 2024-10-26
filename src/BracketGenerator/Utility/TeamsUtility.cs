@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BracketGenerator.Utility
 {
-    public static class TeamsUtilities
+    public static class TeamsUtility
     {
         public static List<string> SimpleTeams()
         {

@@ -29,9 +29,9 @@ namespace BracketGenerator.Strategies
             _strategy.ExecuteTournament();
         }
 
-        public void GetTournamentWinner() { 
+        public void DisplayTournamentWinner() { 
           
-            _strategy.GetTournamentWinner();
+            _strategy.DisplayTournamentWinner();
         }
 
         public void PathToVictory() {

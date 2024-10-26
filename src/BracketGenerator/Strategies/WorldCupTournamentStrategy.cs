@@ -14,8 +14,15 @@ namespace BracketGenerator.Strategies
     {
         private Dictionary<int, List<Match>> _roundMatches = new Dictionary<int, List<Match>>(); // Stores matches by round number
         private List<Team> _currentRoundTeams = new List<Team>(); // Teams for the current round
-        public List<string> KnockOutTeamList = TeamsUtilities.SimpleTeams();
+        public List<string> KnockOutTeamList = TeamsUtility.SimpleTeams();
         private Team _winningTeam;
+
+        private IMatchService _matchService;
+
+        public WorldCupTournamentStrategy(IMatchService matchService)
+        {
+            _matchService = matchService;
+        }
         public void SeedTeams()
         {
             _currentRoundTeams = KnockOutTeamList.Select(name => new Team(name)).ToList();
@@ -30,11 +37,6 @@ namespace BracketGenerator.Strategies
                 var matches = GenerateMatches(_currentRoundTeams);
                 _roundMatches[round] = matches;
                 _currentRoundTeams = SimulateMatches(matches);
-
-                foreach (var match in matches)
-                {
-                    Console.WriteLine($"{match.Team1.Name} vs {match.Team2.Name} - Winner: {match.Winner.Name}");
-                }
             }
         }
 
@@ -43,13 +45,7 @@ namespace BracketGenerator.Strategies
         {
             var matches = new List<Match>();
 
-            if (teams.Count % 2 == 1)
-            {
-
-                return matches;
-            }
-            else
-            {
+            
 
                 for (int i = 0; i < teams.Count; i += 2)
                 {
@@ -60,14 +56,14 @@ namespace BracketGenerator.Strategies
                 }
 
                 return matches;
-            }
+            
 
         }
 
         private List<Team> SimulateMatches(List<Match> matches)
         {
             List<Team> winningTeams = new List<Team>();
-            matches = MatchUtility.ChooseWinner(matches);
+            matches = _matchService.DecideWinners(matches);
 
             foreach (var match in matches)
             {
@@ -79,7 +75,7 @@ namespace BracketGenerator.Strategies
         }
 
 
-        public void GetTournamentWinner()
+        public void DisplayTournamentWinner()
         {
             _winningTeam = _currentRoundTeams.Count == 1 ? _currentRoundTeams[0] : null;
             Console.WriteLine($"\nTournament winner is: {_winningTeam?.Name}");

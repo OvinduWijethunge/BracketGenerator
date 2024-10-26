@@ -10,37 +10,39 @@ namespace BracketGenerator.Tournamentss
 {
     public class NCCATournament : ITournament
     {
-        StrategyContext contextObj = new StrategyContext();
+       // StrategyContext context = new StrategyContext();
+        private readonly StrategyContext _context;
 
-        public NCCATournament()
+        public NCCATournament(StrategyContext context)
         {
-            contextObj.SetStrategy(new NCCATournamentStrategy());
+            _context = context;
+            _context.SetStrategy(new NCCATournamentStrategy(new MatchService()));
         }
 
         public void SeedTeams()
         {
 
-            contextObj.SeedTeams();
+            _context.SeedTeams();
         }
 
         public void ExecuteTournament()
         {
-            contextObj.ExecuteTournament();
+            _context.ExecuteTournament();
         }
 
 
 
 
         // Method to get the tournament winner after the final round
-        public void GetTournamentWinner()
+        public void DisplayTournamentWinner()
         {
-            contextObj.GetTournamentWinner();
+            _context.DisplayTournamentWinner();
         }
 
         // Method to show the path to victory for a specific team
         public void PathToVictory()
         {
-            contextObj.PathToVictory();
+            _context.PathToVictory();
         }
 
     }

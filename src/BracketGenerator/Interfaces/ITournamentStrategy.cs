@@ -12,7 +12,7 @@ namespace BracketGenerator.Interfaces
 
         void ExecuteTournament();
 
-        void GetTournamentWinner();
+        void DisplayTournamentWinner();
 
         void PathToVictory();
     }

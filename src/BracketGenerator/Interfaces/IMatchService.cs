@@ -7,16 +7,8 @@ using System.Threading.Tasks;
 
 namespace BracketGenerator.Interfaces
 {
-    public interface ITournament
+    public interface IMatchService
     {
-
-        void SeedTeams();
-
-        void ExecuteTournament();
-
-        void DisplayTournamentWinner();
-
-        void PathToVictory();
-
+        List<Match> DecideWinners(List<Match> MatchList);
     }
 }

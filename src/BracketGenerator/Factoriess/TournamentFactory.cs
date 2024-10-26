@@ -1,6 +1,7 @@
 ﻿using BracketGenerator.Enums;
 using BracketGenerator.Interfaces;
 using BracketGenerator.Services;
+using BracketGenerator.Strategies;
 using BracketGenerator.Tournamentss;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,11 @@ namespace BracketGenerator.Factoriess
             switch (tournamentType)
             {
                 case TournamentType.Group:
-                    return new GroupTournament();
+                    return new GroupTournament(new StrategyContext());
                 case TournamentType.Knockout:
-                    return new WorldCupTournament();
+                    return new WorldCupTournament(new StrategyContext());
                 case TournamentType.NCAA:
-                    return new NCCATournament();
+                    return new NCCATournament(new StrategyContext());
                 default:
                     throw new ArgumentException("Invalid tournament type");
             }
