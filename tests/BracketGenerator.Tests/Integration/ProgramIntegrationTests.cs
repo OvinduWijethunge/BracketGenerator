@@ -7,6 +7,7 @@ using BracketGenerator.Tournamentss;
 using BracketGenerator.Services;
 using System;
 using System.IO;
+using BracketGenerator.Strategies;
 
 namespace BracketGenerator.Tests.Integration
 {
@@ -20,7 +21,7 @@ namespace BracketGenerator.Tests.Integration
             var tournamentFactory = serviceProvider.GetService<ITournamentFactory>();
 
             // Mock user input for selecting the Knockout tournament
-            string userInput = "1\n"; // Simulates user selecting "Knockout" type tournament
+            string userInput = "1\n"; 
             using (var input = new StringReader(userInput))
             using (var output = new StringWriter())
             {
@@ -33,7 +34,7 @@ namespace BracketGenerator.Tests.Integration
                 // Assert
                 string consoleOutput = output.ToString();
                 Assert.Contains("Starting Round", consoleOutput);
-                Assert.Contains("Tournament winner is", consoleOutput);
+                Assert.Contains("Tournament winner is: Brazil", consoleOutput);
             }
         }
 
@@ -45,7 +46,7 @@ namespace BracketGenerator.Tests.Integration
             var tournamentFactory = serviceProvider.GetService<ITournamentFactory>();
 
             // Mock user input for selecting the NCAA tournament
-            string userInput = "2\n"; // Simulates user selecting "NCAA" type tournament
+            string userInput = "2\n";
             using (var input = new StringReader(userInput))
             using (var output = new StringWriter())
             {
@@ -70,7 +71,7 @@ namespace BracketGenerator.Tests.Integration
             var tournamentFactory = serviceProvider.GetService<ITournamentFactory>();
 
             // Mock user input for selecting the Group tournament
-            string userInput = "3\n"; // Simulates user selecting "Group" type tournament
+            string userInput = "3\n"; 
             using (var input = new StringReader(userInput))
             using (var output = new StringWriter())
             {
@@ -82,7 +83,7 @@ namespace BracketGenerator.Tests.Integration
 
                 // Assert
                 string consoleOutput = output.ToString();
-                Assert.Contains("Group", consoleOutput); // Since it's a group tournament, check for group-specific output
+                Assert.Contains("Group", consoleOutput); 
                 Assert.Contains("No tournament winner", consoleOutput);
             }
         }
@@ -92,14 +93,17 @@ namespace BracketGenerator.Tests.Integration
             // Shared setup for dependency injection
             return new ServiceCollection()
                 .AddSingleton<ITournament, WorldCupTournament>()
-                .AddSingleton<ITournament, NCCATournament>()
-                .AddSingleton<ITournament, GroupTournament>()
-                .AddTransient<ISharedService, SharedService>()
-                .AddTransient<IWorldCupTournamentService, WorldCupTournamentService>()
-                .AddTransient<INCCATournamentService, NCCATournamentService>()
-                .AddTransient<IGroupTournamentService, GroupTournamentService>()
-                .AddTransient<ITournamentFactory, TournamentFactory>()
-                .BuildServiceProvider();
+            .AddSingleton<ITournament, NCCATournament>()
+            .AddSingleton<ITournament, GroupTournament>()
+            .AddSingleton<ITournamentStrategy, WorldCupTournamentStrategy>()
+            .AddSingleton<ITournamentStrategy, NCCATournamentStrategy>()
+            .AddSingleton<ITournamentStrategy, GroupTournamentStrategy>()
+            .AddSingleton<ISharedService, SharedService>()
+            .AddSingleton<IWorldCupTournamentService, WorldCupTournamentService>()
+            .AddSingleton<INCCATournamentService, NCCATournamentService>()
+            .AddSingleton<IGroupTournamentService, GroupTournamentService>()
+            .AddSingleton<ITournamentFactory, TournamentFactory>()
+            .BuildServiceProvider();
         }
 
         private void RunTournamentFlow(ITournamentFactory tournamentFactory)

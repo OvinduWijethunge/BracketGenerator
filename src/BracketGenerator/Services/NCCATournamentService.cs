@@ -1,10 +1,6 @@
 ﻿using BracketGenerator.Interfaces;
 using BracketGenerator.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BracketGenerator.Services
 {
@@ -48,7 +44,6 @@ namespace BracketGenerator.Services
 
         public List<Team> AssignQualifiedTeamsToMainTournament(List<Team> qualifierRoundTeams, List<Team> currentRoundTeams)
         {
-            // Replace placeholders in top-level teams with winners of qualifier round
             int teamIndex = 0;
             for (int i = 0; i < currentRoundTeams.Count; i++)
             {
@@ -58,7 +53,6 @@ namespace BracketGenerator.Services
                     teamIndex++;
                 }
             }
-
             return currentRoundTeams;
         }
     }

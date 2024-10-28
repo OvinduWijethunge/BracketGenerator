@@ -31,7 +31,7 @@ namespace BracketGenerator.Tests.Services
             var matches = _sharedService.GenerateMatches(teams);
 
             // Assert
-            Assert.Equal(2, matches.Count); // Expecting 2 matches
+            Assert.Equal(2, matches.Count); 
             Assert.Equal("Team A", matches[0].Team1.Name);
             Assert.Equal("Team B", matches[0].Team2.Name);
             Assert.Equal("Team C", matches[1].Team1.Name);
@@ -53,7 +53,7 @@ namespace BracketGenerator.Tests.Services
             var matches = _sharedService.GenerateMatches(teams);
 
             // Assert
-            Assert.Single(matches); // Expecting 1 match
+            Assert.Single(matches); 
             Assert.Equal("Team A", matches[0].Team1.Name);
             Assert.Equal("Team B", matches[0].Team2.Name);
         }
@@ -75,7 +75,7 @@ namespace BracketGenerator.Tests.Services
             var winningTeams = _sharedService.SimulateMatches(matches);
 
             // Assert
-            Assert.Equal(2, winningTeams.Count); // Expecting 2 winning teams
+            Assert.Equal(2, winningTeams.Count); 
             Assert.All(winningTeams, team => Assert.False(string.IsNullOrEmpty(team.Name)));
         }
 

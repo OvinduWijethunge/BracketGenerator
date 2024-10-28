@@ -1,23 +1,16 @@
 ﻿using BracketGenerator.Interfaces;
 using BracketGenerator.Models;
-using BracketGenerator.Services;
 using BracketGenerator.Utility;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BracketGenerator.Strategies
 {
     public class WorldCupTournamentStrategy : ITournamentStrategy
     {
-        private readonly Dictionary<int, List<Match>> roundBasedMatchStorage = new Dictionary<int, List<Match>>(); // Stores matches by round number
-        private List<Team> currentRoundTeams = new List<Team>(); // Teams for the current round
-        public readonly List<string> KnockOutTeamList = TeamsUtility.KnockOutTeams();
-        private Team _winningTeam;
-
+        public readonly List<string> KnockoutTeamList = TeamsUtility.KnockOutTeams();
+        private readonly Dictionary<int, List<Match>> roundBasedMatchStorage = new();
+        private List<Team> currentRoundTeams = new(); 
+        private Team winningTeam;
         private readonly ISharedService _sharedService;
         private readonly IWorldCupTournamentService _worldCupTournamentService;
 
@@ -28,7 +21,7 @@ namespace BracketGenerator.Strategies
         }
         public void SeedTeams()
         {
-            currentRoundTeams = _worldCupTournamentService.SeedTeams(KnockOutTeamList); 
+            currentRoundTeams = _worldCupTournamentService.SeedTeams(KnockoutTeamList); 
         }
         public void ExecuteTournament()
         {
@@ -46,7 +39,7 @@ namespace BracketGenerator.Strategies
 
         public void DisplayTournamentWinner()
         {
-            _winningTeam = _worldCupTournamentService.DetermineTournamentWinner(currentRoundTeams);           
+            winningTeam = _worldCupTournamentService.DetermineTournamentWinner(currentRoundTeams);           
         }
 
 
@@ -54,7 +47,7 @@ namespace BracketGenerator.Strategies
 
         public void PathToVictory()
         {
-            _worldCupTournamentService.DeterminePathToVictory(roundBasedMatchStorage, _winningTeam);
+            _worldCupTournamentService.DeterminePathToVictory(roundBasedMatchStorage, winningTeam);
         }
     }
 }

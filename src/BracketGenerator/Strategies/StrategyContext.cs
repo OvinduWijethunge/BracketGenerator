@@ -1,9 +1,5 @@
 ﻿using BracketGenerator.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BracketGenerator.Strategies
 {
@@ -21,7 +17,6 @@ namespace BracketGenerator.Strategies
         public void SeedTeams()
         {
             _strategy.SeedTeams();
-
         }
 
         public void ExecuteTournament()
@@ -37,7 +32,6 @@ namespace BracketGenerator.Strategies
 
         public void PathToVictory()
         {
-
             _strategy.PathToVictory();
         }
 

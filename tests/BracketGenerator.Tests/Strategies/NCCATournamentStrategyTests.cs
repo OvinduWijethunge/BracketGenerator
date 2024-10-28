@@ -31,9 +31,9 @@ namespace BracketGenerator.Tests.Strategies
         public void SeedTeams_ShouldSeedTeamsProperly()
         {
             // Arrange
-            var qualifierTeams = TeamsUtility.QualifierRoundTeams(); //new List<string> { "St. John's (NY)", "Princeton", "North Carolina", "Loyola Maryland" };
+            var qualifierTeams = TeamsUtility.QualifierRoundTeams(); 
             var seededQualifierTeams = qualifierTeams.Select(name => new Team(name)).ToList();
-            var mainTeams = TeamsUtility.MainTournamentTeams();// new List<string> { "*Oregon St", " ", " ", "New Hampshire" };
+            var mainTeams = TeamsUtility.MainTournamentTeams();
             var seededMainTeams = mainTeams.Select(name => new Team(name)).ToList();
 
 
@@ -53,76 +53,6 @@ namespace BracketGenerator.Tests.Strategies
             _mockNCCATournamentService.Verify(service => service.SeedTeams(mainTeams), Times.Once);
         }
 
-        //    [Fact]
-        //    public void ExecuteTournament_ShouldGenerateAndSimulateMatches_ForQualifierRoundAndMainTournament()
-        //    {
-        //        // Arrange
-        //        var qualifierTeams = new List<Team>
-        //{
-        //    new Team("Team A"),
-        //    new Team("Team B")
-        //};
-        //        var mainTeams = new List<Team>
-        //{
-        //    new Team("Team C"),
-        //    new Team("Team D")
-        //};
-
-        //        var qualifierMatches = new List<Models.Match>
-        //{
-        //    new Models.Match(new Team("Team A"), new Team("Team B"))
-        //};
-        //        var mainMatches = new List<Models.Match>
-        //{
-        //    new Models.Match(new Team("Team C"), new Team("Team D"))
-        //};
-
-        //        // Setup mock responses
-        //        _mockSharedService
-        //            .Setup(service => service.GenerateMatches(It.IsAny<List<Team>>()))
-        //            .Returns(qualifierMatches);
-
-        //        _mockSharedService
-        //            .Setup(service => service.SimulateMatches(It.IsAny<List<Models.Match>>()))
-        //            .Returns(mainTeams);
-
-        //        // Capture console output
-        //        using (var consoleOutput = new StringWriter())
-        //        {
-        //            Console.SetOut(consoleOutput);
-
-        //            // Act
-        //            _nccaTournamentStrategy.ExecuteTournament();
-
-        //            // Reset console output back to default after the Act
-        //            Console.SetOut(new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true });
-        //        }
-
-        //        // Assert
-        //        _mockSharedService.Verify(service => service.GenerateMatches(It.IsAny<List<Team>>()), Times.AtLeastOnce);
-        //        _mockSharedService.Verify(service => service.SimulateMatches(It.IsAny<List<Models.Match>>()), Times.AtLeastOnce);
-        //    }
-
-
-        //[Fact]
-        //public void DisplayTournamentWinner_ShouldDetermineWinnerProperly()
-        //{
-        //    // Arrange
-        //    var finalRoundTeams = new List<Team>
-        //    {
-        //        new Team("Team A")
-        //    };
-
-        //    _mockNCCATournamentService
-        //        .Setup(service => service.DetermineTournamentWinner(finalRoundTeams))
-        //        .Returns(finalRoundTeams[0]);
-
-        //    // Act
-        //    _nccaTournamentStrategy.DisplayTournamentWinner();
-
-        //    // Assert
-        //    _mockNCCATournamentService.Verify(service => service.DetermineTournamentWinner(finalRoundTeams), Times.Once);
-        //}
 
         [Fact]
         public void PathToVictory_ShouldDetermineCorrectPath()
@@ -150,8 +80,8 @@ namespace BracketGenerator.Tests.Strategies
                 .Verifiable();
 
             // Act
-            _nccaTournamentStrategy.DisplayTournamentWinner(); // Make sure the winning team is set
-            _nccaTournamentStrategy.PathToVictory(); // Call method under test
+            _nccaTournamentStrategy.DisplayTournamentWinner(); 
+            _nccaTournamentStrategy.PathToVictory();
 
             // Assert
             _mockNCCATournamentService.Verify(service => service.DeterminePathToVictory(It.IsAny<Dictionary<int, List<Models.Match>>>(), winningTeam), Times.Once);

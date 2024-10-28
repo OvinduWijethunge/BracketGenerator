@@ -16,7 +16,7 @@ namespace BracketGenerator.Tests.Strategies
 
         public WorldCupTournamentStrategyTests()
         {
-            // Arrange mocks and inject them
+
             _mockSharedService = new Mock<ISharedService>();
             _mockWorldCupTournamentService = new Mock<IWorldCupTournamentService>();
             _strategy = new WorldCupTournamentStrategy(_mockSharedService.Object, _mockWorldCupTournamentService.Object);
@@ -27,8 +27,8 @@ namespace BracketGenerator.Tests.Strategies
         {
             // Arrange
             var expectedTeamsList = new List<string> { "Team A", "Team B", "Team C" };
-            _strategy.KnockOutTeamList.Clear();
-            _strategy.KnockOutTeamList.AddRange(expectedTeamsList);
+            _strategy.KnockoutTeamList.Clear();
+            _strategy.KnockoutTeamList.AddRange(expectedTeamsList);
 
             _mockWorldCupTournamentService
                 .Setup(service => service.SeedTeams(It.IsAny<List<string>>()))
@@ -41,29 +41,6 @@ namespace BracketGenerator.Tests.Strategies
             _mockWorldCupTournamentService.Verify(service => service.SeedTeams(expectedTeamsList), Times.Once);
         }
 
-        //[Fact]
-        //public void ExecuteTournament_ShouldGenerateAndSimulateMatches_ForEachRound()
-        //{
-        //    // Arrange
-        //    var initialTeams = new List<Team> { new Team("Team A"), new Team("Team B"), new Team("Team C"), new Team("Team D") };
-        //    var matches = new List<Models.Match>
-        //    {
-        //        new Models.Match(new Team("Team A"), new Team("Team B")) { Winner = new Team("Team A") },
-        //        new Models.Match(new Team("Team C"), new Team("Team D")) { Winner = new Team("Team C") }
-        //    };
-        //    var nextRoundTeams = new List<Team> { new Team("Team A"), new Team("Team C") };
-
-        //    _mockSharedService.Setup(s => s.GenerateMatches(initialTeams)).Returns(matches);
-        //    _mockSharedService.Setup(s => s.SimulateMatches(matches)).Returns(nextRoundTeams);
-
-        //    // Act
-        //    _strategy.SeedTeams();
-        //    _strategy.ExecuteTournament();
-
-        //    // Assert
-        //    _mockSharedService.Verify(s => s.GenerateMatches(It.IsAny<List<Team>>()), Times.AtLeastOnce);
-        //    _mockSharedService.Verify(s => s.SimulateMatches(It.IsAny<List<Models.Match>>()), Times.AtLeastOnce);
-        //}
 
         [Fact]
         public void DisplayTournamentWinner_ShouldDetermineWinner_FromCurrentRoundTeams()

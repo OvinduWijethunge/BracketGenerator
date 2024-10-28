@@ -14,15 +14,8 @@ namespace BracketGenerator.Factoriess
     public class TournamentFactory : ITournamentFactory
     {
 
-
-        public TournamentFactory()
-        {
-
-        }
-
         public ITournament CreateTournament(Enum tournamentType)
         {
-
             switch (tournamentType)
             {
                 case TournamentType.Group:

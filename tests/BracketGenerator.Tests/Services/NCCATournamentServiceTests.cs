@@ -12,7 +12,6 @@ namespace BracketGenerator.Tests.Services
 
         public NCCATournamentServiceTests()
         {
-            // Arrange: Initialize the service
             _nccaTournamentService = new NCCATournamentService();
         }
 
@@ -82,8 +81,6 @@ namespace BracketGenerator.Tests.Services
 
             // Act
             _nccaTournamentService.DeterminePathToVictory(roundMatches, winningTeam);
-
-            // Note: The test will pass if no exceptions are thrown.
         }
 
         [Fact]

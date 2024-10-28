@@ -1,10 +1,6 @@
 ﻿using BracketGenerator.Interfaces;
 using BracketGenerator.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BracketGenerator.Services
 {
@@ -15,9 +11,6 @@ namespace BracketGenerator.Services
         {
             return teamNames.Select(name => new Team(name)).ToList();
         }
-
-
-
 
         public Team DetermineTournamentWinner(List<Team> currentRoundTeams)
         {
@@ -44,7 +37,6 @@ namespace BracketGenerator.Services
             foreach (var team in path)
             {
                 Console.WriteLine(team.Name);
-
             }
         }
     }

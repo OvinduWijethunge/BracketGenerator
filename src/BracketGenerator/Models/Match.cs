@@ -24,7 +24,6 @@ namespace BracketGenerator.Models
             {
                 throw new ArgumentException("Winner must be one of the playing teams.");
             }
-
             Winner = winner;
         }
     }

@@ -14,7 +14,6 @@ namespace BracketGenerator.Tests.Services
 
         public GroupTournamentServiceTests()
         {
-            // Arrange: Initialize the service
             _groupTournamentService = new GroupTournamentService();
         }
 
@@ -51,7 +50,7 @@ namespace BracketGenerator.Tests.Services
 
             // Assert
             Assert.NotNull(matches);
-            Assert.Equal(3, matches.Count); // 3 matches for a round-robin with 3 teams
+            Assert.Equal(3, matches.Count); 
         }
 
         [Fact]
@@ -93,7 +92,6 @@ namespace BracketGenerator.Tests.Services
                 new Team("Team A"), new Team("Team A"), new Team("Team A"), new Team("Team B"), new Team("Team B"), new Team("Team C")
             };
 
-            // Redirect console output to verify it
             using var consoleOutput = new StringWriter();
             System.Console.SetOut(consoleOutput);
 

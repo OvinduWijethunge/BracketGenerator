@@ -4,9 +4,9 @@ using BracketGenerator.Interfaces;
 using BracketGenerator.Services;
 using Microsoft.Extensions.DependencyInjection;
 using BracketGenerator.Enums;
-using System;
 using BracketGenerator.Tournamentss;
 using BracketGenerator.Factoriess;
+using BracketGenerator.Strategies;
 
 public class Program
 {
@@ -16,9 +16,14 @@ public class Program
             .AddSingleton<ITournament, WorldCupTournament>()
             .AddSingleton<ITournament, NCCATournament>()
             .AddSingleton<ITournament, GroupTournament>()
-            .AddTransient<ISharedService, SharedService>()
-            .AddTransient<IWorldCupTournamentService, WorldCupTournamentService>()
-            .AddTransient<ITournamentFactory, TournamentFactory>()
+            .AddSingleton<ITournamentStrategy, WorldCupTournamentStrategy>()
+            .AddSingleton<ITournamentStrategy, NCCATournamentStrategy>()
+            .AddSingleton<ITournamentStrategy, GroupTournamentStrategy>()
+            .AddSingleton<ISharedService, SharedService>()
+            .AddSingleton<IWorldCupTournamentService, WorldCupTournamentService>()
+            .AddSingleton<INCCATournamentService, NCCATournamentService>()
+            .AddSingleton<IGroupTournamentService, GroupTournamentService>()
+            .AddSingleton<ITournamentFactory, TournamentFactory>()
             .BuildServiceProvider();
 
         var tournamentFactory = serviceProvider.GetService<ITournamentFactory>();

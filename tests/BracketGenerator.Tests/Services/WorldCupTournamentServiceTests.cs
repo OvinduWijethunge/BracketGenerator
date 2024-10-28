@@ -12,7 +12,6 @@ namespace BracketGenerator.Tests.Services
 
         public WorldCupTournamentServiceTests()
         {
-            // Arrange: Initialize the service
             _worldCupService = new WorldCupTournamentService();
         }
 
@@ -33,19 +32,6 @@ namespace BracketGenerator.Tests.Services
             Assert.Contains(teams, t => t.Name == "Team C");
         }
 
-        //[Fact]
-        //public void DetermineTournamentWinner_ShouldReturnWinner_WhenOnlyOneTeamRemaining()
-        //{
-        //    // Arrange
-        //    var currentRoundTeams = new List<Team> { new Team("Team A") };
-
-        //    // Act
-        //    var winner = _worldCupService.DetermineTournamentWinner(currentRoundTeams);
-
-        //    // Assert
-        //    Assert.NotNull(winner);
-        //    Assert.Equal("Team A", winner.Name);
-        //}
 
         [Fact]
         public void DetermineTournamentWinner_ShouldReturnNull_WhenMoreThanOneTeamRemaining()
@@ -82,9 +68,6 @@ namespace BracketGenerator.Tests.Services
 
             // Act
             _worldCupService.DeterminePathToVictory(roundMatches, winningTeam);
-
-            // Note: The test will pass if no exceptions are thrown.
-            // To fully validate console output, additional mechanisms like console redirection would be needed.
         }
     }
 }
