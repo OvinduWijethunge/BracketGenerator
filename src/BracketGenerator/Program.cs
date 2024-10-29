@@ -1,6 +1,4 @@
-﻿
-
-using BracketGenerator.Interfaces;
+﻿using BracketGenerator.Interfaces;
 using BracketGenerator.Services;
 using Microsoft.Extensions.DependencyInjection;
 using BracketGenerator.Enums;
