@@ -7,28 +7,14 @@ namespace BracketGenerator.Tests.Strategies
 {
     public class StrategyContextTests
     {
-        private readonly StrategyContext _strategyContext;
         private readonly Mock<ITournamentStrategy> _mockStrategy;
+        private readonly StrategyContext _strategyContext;
 
         public StrategyContextTests()
         {
-            // Arrange
+            // Arrange: Initialize the mock and StrategyContext with the mock
             _mockStrategy = new Mock<ITournamentStrategy>();
-
-            // Arrange
-            _strategyContext = new StrategyContext();
-            _strategyContext.SetStrategy(_mockStrategy.Object);
-        }
-
-        [Fact]
-        public void SetStrategy_ShouldSetStrategyCorrectly()
-        {
-            // Act:
-            _strategyContext.SetStrategy(_mockStrategy.Object);
-
-            // Assert
-            _strategyContext.SeedTeams();
-            _mockStrategy.Verify(strategy => strategy.SeedTeams(), Times.Once);
+            _strategyContext = new StrategyContext(_mockStrategy.Object);
         }
 
         [Fact]

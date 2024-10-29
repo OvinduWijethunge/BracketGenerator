@@ -11,7 +11,6 @@ namespace BracketGenerator.Tournamentss
         public NCCATournament(StrategyContext context)
         {
             _context = context;
-            _context.SetStrategy(new NCCATournamentStrategy(new SharedService(), new NCCATournamentService()));
         }
 
         public void SeedTeams()

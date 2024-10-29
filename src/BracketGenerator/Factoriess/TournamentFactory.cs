@@ -19,11 +19,11 @@ namespace BracketGenerator.Factoriess
             switch (tournamentType)
             {
                 case TournamentType.Group:
-                    return new GroupTournament(new StrategyContext());
+                    return new GroupTournament(new StrategyContext(new GroupTournamentStrategy(new SharedService(), new GroupTournamentService())));
                 case TournamentType.Knockout:
-                    return new WorldCupTournament(new StrategyContext());
+                    return new WorldCupTournament(new StrategyContext(new WorldCupTournamentStrategy(new SharedService(), new WorldCupTournamentService())));
                 case TournamentType.NCAA:
-                    return new NCCATournament(new StrategyContext());
+                    return new NCCATournament(new StrategyContext(new NCCATournamentStrategy(new SharedService(), new NCCATournamentService())));
                 default:
                     throw new ArgumentException("Invalid tournament type");
             }

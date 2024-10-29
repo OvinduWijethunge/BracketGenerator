@@ -6,12 +6,9 @@ namespace BracketGenerator.Strategies
     public class StrategyContext
     {
         private ITournamentStrategy _strategy;
-        public StrategyContext() { }
-
-
-        public void SetStrategy(ITournamentStrategy strategy)
-        {
-            _strategy = strategy;
+        public StrategyContext(ITournamentStrategy strategy) {
+        
+            _strategy = strategy;       
         }
 
         public void SeedTeams()

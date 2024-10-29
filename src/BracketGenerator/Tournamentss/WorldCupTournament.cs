@@ -9,8 +9,7 @@ namespace BracketGenerator.Tournamentss
         private readonly StrategyContext _context;
         public WorldCupTournament(StrategyContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _context.SetStrategy(new WorldCupTournamentStrategy(new SharedService(), new WorldCupTournamentService()));
+           _context = context;
         }
 
         public void SeedTeams()
