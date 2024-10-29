@@ -26,26 +26,28 @@ public class Program
 
         var tournamentFactory = serviceProvider.GetService<ITournamentFactory>();
 
-
-
         Console.WriteLine("Select a tournament type:");
         Console.WriteLine("1 - Knockout");
         Console.WriteLine("2 - NCAA");
         Console.WriteLine("3 - Group");
 
-        // Get user input
         Console.Write("Enter your choice (1-3): ");
         string userInput = Console.ReadLine();
 
-        int.TryParse(userInput, out int selectedTypeNumber);
-        TournamentType selectedTournamentType = (TournamentType)selectedTypeNumber;
+        if (int.TryParse(userInput, out int selectedTypeNumber) && selectedTypeNumber >= 1 && selectedTypeNumber <= 3)
+        {
 
-        ITournament tournament = tournamentFactory.CreateTournament(selectedTournamentType);
+            TournamentType selectedTournamentType = (TournamentType)selectedTypeNumber;
+            ITournament tournament = tournamentFactory.CreateTournament(selectedTournamentType);
 
-        tournament.SeedTeams();
-        tournament.ExecuteTournament();
-        tournament.DisplayTournamentWinner();
-        tournament.PathToVictory();
-
+            tournament.SeedTeams();
+            tournament.ExecuteTournament();
+            tournament.DisplayTournamentWinner();
+            tournament.PathToVictory();
+        }
+        else
+        {
+            Console.WriteLine("Invalid input. Please enter a number between 1 and 3.");
+        }
     }
 }

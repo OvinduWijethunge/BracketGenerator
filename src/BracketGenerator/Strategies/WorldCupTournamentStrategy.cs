@@ -7,7 +7,7 @@ namespace BracketGenerator.Strategies
 {
     public class WorldCupTournamentStrategy : ITournamentStrategy
     {
-        public readonly List<string> KnockoutTeamList = TeamsUtility.KnockOutTeams();
+        public readonly List<string> KnockoutTeamList = TeamsUtility.KnockoutTeams();
         private readonly Dictionary<int, List<Match>> roundBasedMatchStorage = new();
         private List<Team> currentRoundTeams = new(); 
         private Team winningTeam;

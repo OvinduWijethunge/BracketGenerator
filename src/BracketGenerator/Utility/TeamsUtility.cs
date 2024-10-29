@@ -8,7 +8,7 @@ namespace BracketGenerator.Utility
 {
     public static class TeamsUtility
     {
-        public static List<string> KnockOutTeams()
+        public static List<string> KnockoutTeams()
         {
            
             return new List<string>
