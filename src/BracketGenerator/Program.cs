@@ -30,7 +30,7 @@ public class Program
 
         Console.WriteLine("Select a tournament type:");
         Console.WriteLine("1 - Knockout");
-        Console.WriteLine("2 - NCAA,");
+        Console.WriteLine("2 - NCAA");
         Console.WriteLine("3 - Group");
 
         // Get user input
